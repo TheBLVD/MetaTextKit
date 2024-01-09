@@ -44,11 +44,7 @@ public class MetaTextView: UITextView {
     }
 
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        if isEditable || isSelectable {
-            return super.point(inside: point, with: event)
-        }
-
-        return meta(at: point) != nil
+        return super.point(inside: point, with: event)
     }
 
     func meta(at point: CGPoint) -> Meta? {
