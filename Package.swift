@@ -16,7 +16,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.7.0"),
         .package(url: "https://github.com/SDWebImage/SDWebImage.git", from: "5.17.0"),
-        .package(url: "https://github.com/TwidereProject/Fuzi.git", .branch("feature/raw-dump")),
+        .package(url: "https://github.com/TheBLVD/Fuzi.git", from: "3.1.4"),
         .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.6.1"),
     ],
     targets: [

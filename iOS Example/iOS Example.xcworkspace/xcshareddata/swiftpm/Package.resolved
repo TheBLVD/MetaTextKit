@@ -12,11 +12,11 @@
       },
       {
         "package": "Fuzi",
-        "repositoryURL": "https://github.com/TwidereProject/Fuzi.git",
+        "repositoryURL": "https://github.com/TheBLVD/Fuzi.git",
         "state": {
-          "branch": "feature/raw-dump",
-          "revision": "e4d2d9ecc4a14b48db08ce833742049ad9fade6d",
-          "version": null
+          "branch": null,
+          "revision": "61871bcbab3114ec723ee67af93a23a4c0c4b42a",
+          "version": "3.1.4"
         }
       },
       {
