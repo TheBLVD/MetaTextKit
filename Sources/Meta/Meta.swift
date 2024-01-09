@@ -14,6 +14,7 @@ public enum Meta {
     case email(_ text: String, userInfo: [AnyHashable: Any]? = nil)
     case emoji(_ text: String, shortcode: String, url: String, userInfo: [AnyHashable: Any]? = nil)
     case formatted(_ text: String, FormatType)
+    case none
 }
 
 extension Meta {
@@ -41,6 +42,7 @@ extension Meta {
         case .mention(let text, _, _):     return text
         case .email(let text, _):          return text
         case .formatted(let text, _):      return text
+        case .none:                        return ""
         }
     }
 
@@ -89,6 +91,7 @@ extension Meta: CustomDebugStringConvertible {
         case .email: return "email"
         case .emoji: return "emoji"
         case .formatted(_, let formatType): return "formatted.\(formatType)"
+        case .none: return "none"
         }
     }
     

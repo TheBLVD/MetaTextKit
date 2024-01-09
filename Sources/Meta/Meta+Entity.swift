@@ -28,6 +28,7 @@ extension Meta.Entity {
         case .mention(let text, _, _):     return text
         case .email(let text, _):          return text
         case .formatted(let text, _):      return text
+        case .none:                        return ""
         }
     }
 }

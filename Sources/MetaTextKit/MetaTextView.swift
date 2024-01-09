@@ -61,7 +61,7 @@ public class MetaTextView: UITextView {
         {
             return meta
         } else {
-            return nil
+            return Meta.none
         }
     }
 

@@ -181,6 +181,8 @@ extension MetaText {
                 // workaround: use intersection range temporary
                 let range = NSIntersectionRange(stringRange, entity.range)
                 attributedString.addAttributes(linkAttributes, range: range)
+            case .none:
+                break
             case .formatted(_, let type):
                 attributedString.addAttribute(.meta, value: entity.meta, range: entity.range)
                 guard let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
