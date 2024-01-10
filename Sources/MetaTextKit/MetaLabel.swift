@@ -72,7 +72,7 @@ public class MetaLabel: UILabel {
         {
             return meta
         } else {
-            return nil
+            return Meta.none
         }
     }
 
