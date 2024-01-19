@@ -185,7 +185,7 @@ extension MetaText {
                 break
             case .formatted(_, let type):
                 attributedString.addAttribute(.meta, value: entity.meta, range: entity.range)
-                guard let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
+                guard stringRange.contains(entity.range.location), let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
                 else { continue }
                 let descriptor = font.fontDescriptor
                 let paragraphStyle = attributedString.attribute(.paragraphStyle, at: entity.range.location, effectiveRange: nil) as? NSParagraphStyle ?? paragraphStyle
@@ -253,7 +253,7 @@ extension MetaText {
         for entity in content.entities.reversed() {
             guard let attachment = content.metaAttachment(for: entity) else { continue }
             replacedAttachments.append(attachment)
-
+            guard NSRange(location: 0, length: attributedString.length).contains(entity.range.location) else { continue }
             let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
             let fontSize = font?.pointSize ?? MetaText.fontSize
             attachment.bounds = CGRect(
