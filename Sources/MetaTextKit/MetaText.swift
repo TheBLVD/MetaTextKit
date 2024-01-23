@@ -180,10 +180,12 @@ extension MetaText {
                 // FIXME: the emoji make cause wrong entity range out of bounds
                 // workaround: use intersection range temporary
                 let range = NSIntersectionRange(stringRange, entity.range)
+                guard range.length > 0 else { continue }
                 attributedString.addAttributes(linkAttributes, range: range)
             case .none:
                 break
             case .formatted(_, let type):
+                guard entity.range.length > 0 else { continue }
                 attributedString.addAttribute(.meta, value: entity.meta, range: entity.range)
                 guard stringRange.contains(entity.range.location), let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
                 else { continue }
