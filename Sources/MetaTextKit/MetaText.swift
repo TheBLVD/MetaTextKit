@@ -171,7 +171,6 @@ extension MetaText {
         attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: allRange)
 
         // meta
-        let stringRange = NSRange(location: 0, length: attributedString.length)
         for entity in content.entities {
             switch entity.meta {
             case .url, .hashtag, .mention, .email, .emoji:
@@ -179,6 +178,7 @@ extension MetaText {
                 linkAttributes[.meta] = entity.meta
                 // FIXME: the emoji make cause wrong entity range out of bounds
                 // workaround: use intersection range temporary
+                let stringRange = NSRange(location: 0, length: attributedString.length)
                 let range = NSIntersectionRange(stringRange, entity.range)
                 guard range.length > 0 else { continue }
                 attributedString.addAttributes(linkAttributes, range: range)
@@ -186,8 +186,10 @@ extension MetaText {
                 break
             case .formatted(_, let type):
                 guard entity.range.length > 0 else { continue }
+                let stringRange = NSRange(location: 0, length: attributedString.length)
+                guard NSIntersectionRange(stringRange, entity.range).length > 0 else { continue }
                 attributedString.addAttribute(.meta, value: entity.meta, range: entity.range)
-                guard stringRange.contains(entity.range.location), let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
+                guard let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
                 else { continue }
                 let descriptor = font.fontDescriptor
                 let paragraphStyle = attributedString.attribute(.paragraphStyle, at: entity.range.location, effectiveRange: nil) as? NSParagraphStyle ?? paragraphStyle
