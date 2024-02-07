@@ -179,57 +179,58 @@ extension MetaText {
                 // FIXME: the emoji make cause wrong entity range out of bounds
                 // workaround: use intersection range temporary
                 let stringRange = NSRange(location: 0, length: attributedString.length)
-                let range = NSIntersectionRange(stringRange, entity.range)
-                guard range.length > 0 else { continue }
-                attributedString.addAttributes(linkAttributes, range: range)
+                let validEntityRange = NSIntersectionRange(stringRange, entity.range)
+                guard validEntityRange.length > 0 else { continue }
+                attributedString.addAttributes(linkAttributes, range: validEntityRange)
             case .none:
                 break
             case .formatted(_, let type):
                 guard entity.range.length > 0 else { continue }
                 let stringRange = NSRange(location: 0, length: attributedString.length)
-                guard NSIntersectionRange(stringRange, entity.range).length > 0 else { continue }
-                attributedString.addAttribute(.meta, value: entity.meta, range: entity.range)
-                guard let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
+                let validEntityRange = NSIntersectionRange(stringRange, entity.range)
+                guard validEntityRange.length > 0 else { continue }
+                attributedString.addAttribute(.meta, value: entity.meta, range: validEntityRange)
+                guard let font = attributedString.attribute(.font, at: validEntityRange.location, effectiveRange: nil) as? UIFont
                 else { continue }
                 let descriptor = font.fontDescriptor
-                let paragraphStyle = attributedString.attribute(.paragraphStyle, at: entity.range.location, effectiveRange: nil) as? NSParagraphStyle ?? paragraphStyle
+                let paragraphStyle = attributedString.attribute(.paragraphStyle, at: validEntityRange.location, effectiveRange: nil) as? NSParagraphStyle ?? paragraphStyle
                 switch type {
                 case .strong:
                     if let bold = descriptor.withSymbolicTraits(descriptor.symbolicTraits.union(.traitBold)) {
-                        attributedString.addAttribute(.font, value: UIFont(descriptor: bold, size: font.pointSize), range: entity.range)
+                        attributedString.addAttribute(.font, value: UIFont(descriptor: bold, size: font.pointSize), range: validEntityRange)
                     }
                 case .emphasized:
                     if let italic = descriptor.withSymbolicTraits(descriptor.symbolicTraits.union(.traitItalic)) {
-                        attributedString.addAttribute(.font, value: UIFont(descriptor: italic, size: font.pointSize), range: entity.range)
+                        attributedString.addAttribute(.font, value: UIFont(descriptor: italic, size: font.pointSize), range: validEntityRange)
                     }
                 case .underlined:
-                    attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: entity.range)
+                    attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: validEntityRange)
                     if let underlineColor = textAttributes[.foregroundColor] as? UIColor {
-                        attributedString.addAttribute(.underlineColor, value: underlineColor, range: entity.range)
+                        attributedString.addAttribute(.underlineColor, value: underlineColor, range: validEntityRange)
                     }
                 case .strikethrough:
-                    attributedString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: entity.range)
+                    attributedString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: validEntityRange)
                     if let strikethroughColor = textAttributes[.foregroundColor] as? UIColor {
-                        attributedString.addAttribute(.strikethroughColor, value: strikethroughColor, range: entity.range)
+                        attributedString.addAttribute(.strikethroughColor, value: strikethroughColor, range: validEntityRange)
                     }
                 case .code:
                     if let monospaced = descriptor.withSymbolicTraits(descriptor.symbolicTraits.union(.traitMonoSpace)) {
-                        attributedString.addAttribute(.font, value: UIFont(descriptor: monospaced, size: font.pointSize), range: entity.range)
+                        attributedString.addAttribute(.font, value: UIFont(descriptor: monospaced, size: font.pointSize), range: validEntityRange)
                     }
                     let paragraphStyle = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
                     // FIXME: excpet list
                     paragraphStyle.lineHeightMultiple = 0.8
                     paragraphStyle.lineSpacing = 0
-                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: entity.range)
+                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
                 case .blockquote:
                     // set indent
                     let paragraphStyle = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
                     paragraphStyle.firstLineHeadIndent = 10
                     paragraphStyle.headIndent = 10
-                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: entity.range)
+                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
                     // set text color
                     if let foregroundColor = textAttributes[.foregroundColor] as? UIColor {
-                        attributedString.addAttribute(.foregroundColor, value: foregroundColor.withAlphaComponent(0.5), range: entity.range)
+                        attributedString.addAttribute(.foregroundColor, value: foregroundColor.withAlphaComponent(0.5), range: validEntityRange)
                     }
                 case .orderedList, .unorderedList:
                     let paragraphStyle = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
@@ -240,13 +241,13 @@ extension MetaText {
                     paragraphStyle.tabStops = (0..<10).map { i -> NSTextTab in
                         NSTextTab(textAlignment: .left, location: MetaText.tabStopIndent * CGFloat(i), options: [.columnTerminators: terminator])
                     }
-                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: entity.range)
+                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
                 case .listItem:
                     let paragraphStyle = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
                     // remove the spacing between list items
                     paragraphStyle.paragraphSpacing = 0
                     paragraphStyle.paragraphSpacingBefore = 0
-                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: entity.range)
+                    attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
                 }
             }
         }
@@ -257,8 +258,10 @@ extension MetaText {
         for entity in content.entities.reversed() {
             guard let attachment = content.metaAttachment(for: entity) else { continue }
             replacedAttachments.append(attachment)
-            guard NSRange(location: 0, length: attributedString.length).contains(entity.range.location) else { continue }
-            let font = attributedString.attribute(.font, at: entity.range.location, effectiveRange: nil) as? UIFont
+            let stringRange = NSRange(location: 0, length: attributedString.length)
+            let validEntityRange = NSIntersectionRange(stringRange, entity.range)
+            guard validEntityRange.length > 0 else { continue }
+            let font = attributedString.attribute(.font, at: validEntityRange.location, effectiveRange: nil) as? UIFont
             let fontSize = font?.pointSize ?? MetaText.fontSize
             attachment.bounds = CGRect(
                 origin: CGPoint(x: 0, y: -floor(fontSize / 5)),  // magic descender
@@ -266,8 +269,8 @@ extension MetaText {
             )
 
             // inject attachment via replace string at entity range
-            attributedString.replaceCharacters(in: entity.range, with: NSAttributedString(attachment: attachment))
-            attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: entity.range)
+            attributedString.replaceCharacters(in: validEntityRange, with: NSAttributedString(attachment: attachment))
+            attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
         }
         allRange = NSRange(location: 0, length: attributedString.length)
 
