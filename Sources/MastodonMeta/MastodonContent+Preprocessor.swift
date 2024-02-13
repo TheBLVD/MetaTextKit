@@ -173,6 +173,13 @@ extension MastodonContent.PreprocessInfo {
             }
             if let closeTagRange = text.range(of: "</ol>", options: .backwards, range: range), attribute.levelForList == 1 {
                 operations.append(.insert(range: closeTagRange.lowerBound..<closeTagRange.lowerBound, content: "\u{2029}"))
+            }            
+        case "blockquote":
+            if let openTagRange = text.range(of: "<blockquote>", options: .backwards, range: range) {
+                operations.append(.insert(range: openTagRange.lowerBound..<openTagRange.lowerBound, content: "\u{2029}"))
+            }
+            if let closeTagRange = text.range(of: "</blockquote>", options: .backwards, range: range) {
+                operations.append(.insert(range: closeTagRange.lowerBound..<closeTagRange.lowerBound, content: "\u{2029}"))
             }
         default:
             break
