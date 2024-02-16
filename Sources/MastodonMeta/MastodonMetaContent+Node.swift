@@ -177,7 +177,7 @@ extension MastodonMetaContent.Node {
         
         var children: [MastodonMetaContent.Node] = []
         for _element in parent.children {
-            let _text = _element.stringValue.trimmingCharacters(in: .newlines)
+            let _text = _element.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
             
             // scan element text
             _ = scanner.scanUpToString(_text)
