@@ -178,13 +178,11 @@ extension MastodonContent.PreprocessInfo {
             // MAM-3942 and MAM-3976;
             // we need this because some blockquotes use <p>s and linebreak correctly;
             // while some use <span>s and fail to break correctly.
-            if let openTagRange = text.range(of: "<blockquote>", options: .backwards, range: range) {
-                if let _ = node.firstChild(tag: "span") {
+            if let _ = node.firstChild(tag: "span") {
+                if let openTagRange = text.range(of: "<blockquote>", options: .backwards, range: range) {
                     operations.append(.insert(range: openTagRange.lowerBound..<openTagRange.lowerBound, content: "\u{2029}"))
                 }
-            }
-            if let closeTagRange = text.range(of: "</blockquote>", options: .backwards, range: range) {
-                if let _ = node.firstChild(tag: "span") {
+                if let closeTagRange = text.range(of: "</blockquote>", options: .backwards, range: range) {
                     operations.append(.insert(range: closeTagRange.lowerBound..<closeTagRange.lowerBound, content: "\u{2029}"))
                 }
             }
