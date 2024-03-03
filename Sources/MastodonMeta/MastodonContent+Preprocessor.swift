@@ -144,13 +144,13 @@ extension MastodonContent.PreprocessInfo {
             }
         case "li":
             if let openTagRange = text.range(of: "<li>", options: [], range: range) {
-                let indent = String(repeating: "\t", count: attribute.levelForList)
+                let indent = String(repeating: "\t", count: attribute.levelForList - 1)
                 let index: String = {
                     if isOrderedListItem == true {
                         let index = indexOfListItem + 1
-                        return "\(index). "
+                        return "\(index).\t"
                     } else {
-                        return "- "
+                        return "\u{2022}\t"
                     }
                 }()
                 operations.append(.insert(range: openTagRange.upperBound..<openTagRange.upperBound, content: indent + index))

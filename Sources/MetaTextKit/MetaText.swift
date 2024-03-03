@@ -242,11 +242,12 @@ extension MetaText {
                         NSTextTab(textAlignment: .left, location: MetaText.tabStopIndent * CGFloat(i), options: [.columnTerminators: terminator])
                     }
                     attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
-                case .listItem:
+                case .listItem(let indentLevel):
                     let paragraphStyle = paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
                     // remove the spacing between list items
                     paragraphStyle.paragraphSpacing = 0
                     paragraphStyle.paragraphSpacingBefore = 0
+                    paragraphStyle.headIndent = MetaText.tabStopIndent * CGFloat(indentLevel)
                     attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: validEntityRange)
                 }
             }
