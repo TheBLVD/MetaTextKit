@@ -123,9 +123,9 @@ public class MetaLayoutManager: NSLayoutManager {
                         let paragraphStyle = textStorage.attribute(.paragraphStyle, at: range.location, effectiveRange: nil) as? NSParagraphStyle
                         return CGRect(
                             x: 0,
-                            y: _rect.origin.y + textViewPadding + (paragraphStyle?.paragraphSpacing ?? 4),
+                            y: _rect.origin.y + textViewPadding,
                             width: 5,
-                            height: _rect.height + (paragraphStyle?.paragraphSpacing ?? 4) + (paragraphStyle?.paragraphSpacingBefore ?? 4)
+                            height: _rect.height
                         )
                     }()
                     let fillColor: UIColor = {
