@@ -175,10 +175,13 @@ extension MastodonContent.PreprocessInfo {
                 operations.append(.insert(range: closeTagRange.lowerBound..<closeTagRange.lowerBound, content: "\u{2029}"))
             }            
         case "blockquote":
-            if let openTagRange = text.range(of: "<blockquote>", options: .backwards, range: range) {
+            // MAM-3942 and MAM-3976;
+            // we need this because some blockquotes use <p>s and linebreak correctly;
+            // while some don't.
+            if let openTagRange = text.range(of: "<blockquote>", options: .backwards, range: range), node.previousSibling?.tag != "p" {
                 operations.append(.insert(range: openTagRange.lowerBound..<openTagRange.lowerBound, content: "\u{2029}"))
             }
-            if let closeTagRange = text.range(of: "</blockquote>", options: .backwards, range: range) {
+            if let closeTagRange = text.range(of: "</blockquote>", options: .backwards, range: range), node.firstChild(tag: "p") == nil {
                 operations.append(.insert(range: closeTagRange.lowerBound..<closeTagRange.lowerBound, content: "\u{2029}"))
             }
         default:
