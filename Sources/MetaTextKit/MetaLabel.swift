@@ -13,7 +13,7 @@ public protocol MetaLabelDelegate: AnyObject {
     func metaLabel(_ metaLabel: MetaLabel, didSelectMeta meta: Meta)
 }
 
-public class MetaLabel: UILabel {
+open class MetaLabel: UILabel {
 
     public weak var linkDelegate: MetaLabelDelegate?
 
