@@ -40,7 +40,7 @@ open class MetaLabel: UILabel {
 
     let tapGestureRecognizer = UITapGestureRecognizer()
 
-    public override init(frame: CGRect) {
+    open override init(frame: CGRect) {
         super.init(frame: frame)
 
         textStorage.addLayoutManager(layoutManager)
@@ -54,7 +54,7 @@ open class MetaLabel: UILabel {
         tapGestureRecognizer.delaysTouchesBegan = false
     }
 
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
