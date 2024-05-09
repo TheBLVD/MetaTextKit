@@ -24,6 +24,7 @@ extension MastodonContent {
                 .replacingOccurrences(of: "</h1>|</h2>|</h3>|</h4>|</h5>|</h6>", with: "</strong></p>", options: .regularExpression, range: nil)
                 .replacingOccurrences(of: "<br>|<br/>|<br />", with: "\u{2028}", options: .regularExpression, range: nil)
                 .replacingOccurrences(of: "</pre>", with: "</pre>\u{2029}", range: nil)
+                .replacingOccurrences(of: "\n", with: "", range: nil)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             return content
         }()
